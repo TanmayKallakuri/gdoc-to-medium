@@ -88,11 +88,13 @@ class TokenBackend:
         }
 
     def _request(self, method: str, url: str, **kwargs) -> httpx.Response:
-        """Issue a request, turning transport failures into TransientMediumError.
+        """Issue a request, turning transport failures into typed errors.
 
         Connection/timeout problems are retryable; the orchestrator leaves the
-        doc in Ready and tries again next run. The exception carries only the
-        transport error type, never request headers or the token.
+        doc in Ready and tries again next run. `from None` suppresses the
+        exception chain: the chained httpx error holds .request.headers with the
+        live Bearer token, which the traceback printer would otherwise surface in
+        logs or on an uncaught crash. The error keeps only the transport type.
         """
         headers = {**self._auth_headers(), **kwargs.pop("headers", {})}
         try:
@@ -100,11 +102,16 @@ class TokenBackend:
         except httpx.TimeoutException as exc:
             raise TransientMediumError(
                 f"Timed out contacting Medium API ({type(exc).__name__})"
-            ) from exc
+            ) from None
         except httpx.TransportError as exc:
             raise TransientMediumError(
                 f"Network error contacting Medium API ({type(exc).__name__})"
-            ) from exc
+            ) from None
+        except httpx.RequestError as exc:
+            # e.g. DecodingError: garbled response encoding — not retryable.
+            raise PermanentMediumError(
+                f"Unexpected error contacting Medium API ({type(exc).__name__})"
+            ) from None
 
     @staticmethod
     def _data_field(response: httpx.Response, key: str, context: str) -> str:
@@ -190,11 +197,11 @@ class TokenBackend:
             "publishStatus": status,
         }
         context = "creating post (/v1/users/{authorId}/posts)"
+        # httpx sets Content-Type: application/json automatically from json=.
         response = self._request(
             "POST",
             f"{API_BASE}/users/{author}/posts",
             json=body,
-            headers={"Content-Type": "application/json"},
         )
         if response.status_code not in (200, 201):
             raise _classify_status(response.status_code, context)
