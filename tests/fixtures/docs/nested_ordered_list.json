@@ -1,0 +1,35 @@
+{
+  "title": "Nested Ordered List",
+  "lists": {
+    "kix.ordered": {
+      "listProperties": {
+        "nestingLevels": [
+          { "glyphType": "DECIMAL", "glyphFormat": "%0." },
+          { "glyphType": "GLYPH_TYPE_UNSPECIFIED", "glyphSymbol": "○" }
+        ]
+      }
+    }
+  },
+  "body": {
+    "content": [
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Top numbered item\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" },
+          "bullet": { "listId": "kix.ordered", "nestingLevel": 0 }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Nested item at level one\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" },
+          "bullet": { "listId": "kix.ordered", "nestingLevel": 1 }
+        }
+      }
+    ]
+  }
+}

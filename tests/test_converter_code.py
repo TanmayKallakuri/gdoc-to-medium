@@ -77,3 +77,37 @@ def test_font_matching_is_case_insensitive():
     doc = {"body": {"content": [_para([_mono("code\n", "CONSOLAS")])]}}
     md, _, _ = convert(doc, "x")
     assert md == "```\ncode\n```"
+
+
+def test_blank_monospace_line_splits_adjacent_code_blocks():
+    # A whitespace-only monospace paragraph between two code blocks must separate them
+    # into two fences, not merge them into one (regression: it used to be dropped).
+    doc = {"body": {"content": [
+        _para([_mono("block_a()\n")]),
+        _para([_mono("   \n")]),
+        _para([_mono("block_b()\n")]),
+    ]}}
+    md, _, _ = convert(doc, "x")
+    assert md == "```\nblock_a()\n```\n\n```\nblock_b()\n```"
+    assert md.count("```") == 4
+
+
+def test_code_containing_triple_backtick_line_uses_longer_fence():
+    # Code whose content has a line of exactly ``` must be wrapped in a 4-backtick fence
+    # (CommonMark) so the fence does not terminate early and nothing spills out.
+    doc = {"body": {"content": [
+        _para([_mono("before\n")]),
+        _para([_mono("```\n")]),
+        _para([_mono("after\n")]),
+    ]}}
+    md, _, _ = convert(doc, "x")
+    assert md == "````\nbefore\n```\nafter\n````"
+    # The inner triple backtick is fully contained between the 4-backtick delimiters.
+    assert md.startswith("````\n")
+    assert md.endswith("\n````")
+
+
+def test_code_with_four_backtick_line_uses_five_backtick_fence():
+    doc = {"body": {"content": [_para([_mono("x = '````'\n")])]}}
+    md, _, _ = convert(doc, "x")
+    assert md == "`````\nx = '````'\n`````"

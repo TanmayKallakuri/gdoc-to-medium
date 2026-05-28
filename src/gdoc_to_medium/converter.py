@@ -139,7 +139,11 @@ def _render_paragraph(
         prefix = _HEADING_HASHES[named]
         return _Block(text=f"{prefix} {text}", kind="heading", plain=plain_text.strip())
 
-    if all_mono and not had_image and plain_text.strip():
+    if all_mono and not had_image and had_text:
+        if not plain_text.strip():
+            # A blank monospace line is an empty separator, NOT code, so it splits two
+            # adjacent code blocks into separate fences during coalescing.
+            return _Block(text="", kind="para", plain="")
         # Raw plain text keeps indentation verbatim and avoids leaking inline backticks into the fence.
         return _Block(text=plain_text.rstrip("\n"), kind="code", plain=plain_text.strip())
 
@@ -178,7 +182,7 @@ def _render_inline_elements(
             had_text = True
             plain_parts.append(raw)
             style = run.get("textStyle") if isinstance(run.get("textStyle"), dict) else {}
-            if raw.strip() and not _run_is_monospace(style):
+            if not _run_is_monospace(style):
                 all_mono = False
             parts.append(_render_text_run(raw, style))
         elif "inlineObjectElement" in el:
@@ -322,7 +326,14 @@ def _render_table(
 
 
 def _coalesce_code_blocks(blocks: list[_Block]) -> list[_Block]:
-    """Merge runs of consecutive `code` blocks into a single fenced block."""
+    """Merge runs of consecutive `code` blocks into a single fenced block.
+
+    A non-code block between two code blocks (including a blank monospace separator
+    emitted by `_render_paragraph`) ends the run, so adjacent snippets stay in distinct
+    fences. The fence length adapts to the content: per CommonMark, a code body that
+    itself contains a run of N backticks is wrapped in `max(3, N+1)` backticks so the
+    fence cannot terminate early.
+    """
     out: list[_Block] = []
     i = 0
     while i < len(blocks):
@@ -335,10 +346,24 @@ def _coalesce_code_blocks(blocks: list[_Block]) -> list[_Block]:
         while j < len(blocks) and blocks[j].kind == "code":
             lines.append(blocks[j].text)
             j += 1
-        fenced = "```\n" + "\n".join(lines) + "\n```"
-        out.append(_Block(text=fenced, kind="code", plain="\n".join(lines)))
+        body = "\n".join(lines)
+        fence = "`" * max(3, _longest_backtick_run(body) + 1)
+        fenced = f"{fence}\n{body}\n{fence}"
+        out.append(_Block(text=fenced, kind="code", plain=body))
         i = j
     return out
+
+
+def _longest_backtick_run(text: str) -> int:
+    longest = 0
+    current = 0
+    for ch in text:
+        if ch == "`":
+            current += 1
+            longest = max(longest, current)
+        else:
+            current = 0
+    return longest
 
 
 def _extract_metadata(blocks: list[_Block], filename: str) -> Metadata:
@@ -396,6 +421,9 @@ def _join_blocks(blocks: list[_Block]) -> str:
     prev_list = False
     for block in blocks:
         is_list = block.kind == "list_item"
+        if not is_list and not block.text:
+            # Blank separator sentinels carry no body text; they only split code runs.
+            continue
         if is_list:
             marker = "1. " if block.list_ordered else "- "
             parts.append(("\n" if prev_list else "\n\n") + marker + block.text if parts else marker + block.text)

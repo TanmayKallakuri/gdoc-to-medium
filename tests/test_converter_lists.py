@@ -53,3 +53,13 @@ def test_nested_list_degrades_to_flat_without_crash():
 def test_bullet_with_dangling_list_id_defaults_to_unordered():
     md, _, _ = convert(_load("gappy.json"), "x")
     assert "- Bullet with missing list reference" in md
+
+
+def test_nested_ordered_list_marks_all_items_numbered_known_v1_limitation():
+    # ACCEPTED v1 degradation (spec 5.2): orderness is read from nestingLevels[0], so a
+    # DECIMAL-at-level-0 list renders its level-1 child as "1." too. This pins that the
+    # mismark is intentional, not accidental; a per-level read is out of scope for v1.
+    md, _, _ = convert(_load("nested_ordered_list.json"), "x")
+    assert "1. Top numbered item" in md
+    assert "1. Nested item at level one" in md
+    assert "- Nested item at level one" not in md
