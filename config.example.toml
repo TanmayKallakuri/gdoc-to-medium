@@ -16,7 +16,9 @@ medium_token = "your-medium-integration-token-here"
 backend = "token"
 
 # Drive folder ids for the folder-state workflow (filled in during setup, spec section 3).
+# Keys must be exactly these names. 'ready' is the "Ready to Publish" folder you
+# drag a doc into to publish it; 'published' and 'failed' are where docs land after.
 [folders]
-ready_to_publish = ""
+ready = ""
 published = ""
 failed = ""
