@@ -164,3 +164,40 @@ class TokenBackend:
         if response.status_code != 201:
             raise _classify_status(response.status_code, "uploading image (/v1/images)")
         return self._data_field(response, "url", "uploading image (/v1/images)")
+
+    def create_post(
+        self,
+        title: str,
+        markdown: str,
+        tags: list[str],
+        publish_status: str = "draft",
+    ) -> PostResult:
+        """Create a Medium post from markdown and return its URL (spec 5.3, research note).
+
+        Posts to /v1/users/{authorId}/posts; the author id is resolved lazily on
+        first use. Tags are defensively capped at Medium's limit of 5 and an
+        unrecognized publish_status falls back to 'draft' so we never ship a
+        public post by accident. A 429/5xx is transient (retry next run); any
+        other failure is permanent (route the doc to Failed).
+        """
+        author = self.author_id()
+        status = publish_status if publish_status in _VALID_PUBLISH_STATUS else "draft"
+        body = {
+            "title": title,
+            "content": markdown,
+            "contentFormat": "markdown",
+            "tags": list(tags)[:MAX_TAGS],
+            "publishStatus": status,
+        }
+        context = "creating post (/v1/users/{authorId}/posts)"
+        response = self._request(
+            "POST",
+            f"{API_BASE}/users/{author}/posts",
+            json=body,
+            headers={"Content-Type": "application/json"},
+        )
+        if response.status_code not in (200, 201):
+            raise _classify_status(response.status_code, context)
+        url = self._data_field(response, "url", context)
+        logger.info("created Medium post (publishStatus=%s)", status)
+        return PostResult(url=url)
