@@ -1,0 +1,32 @@
+{
+  "title": "Out of Scope Suggestion",
+  "body": {
+    "content": [
+      {
+        "paragraph": {
+          "elements": [
+            {
+              "textRun": {
+                "content": "Original kept ",
+                "textStyle": {},
+                "suggestedDeletionIds": ["sug.del.1"]
+              }
+            },
+            {
+              "textRun": {
+                "content": "and a suggested insertion ",
+                "textStyle": {},
+                "suggestedInsertionIds": ["sug.ins.1"]
+              }
+            },
+            { "textRun": { "content": "plus a normal tail.\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" },
+          "suggestedParagraphStyleChanges": {
+            "sug.style.1": { "paragraphStyle": {} }
+          }
+        }
+      }
+    ]
+  }
+}

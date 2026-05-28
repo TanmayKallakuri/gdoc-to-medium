@@ -1,0 +1,79 @@
+{
+  "title": "Title and Headings",
+  "body": {
+    "content": [
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "My Great Post\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "TITLE" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "First Section\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "HEADING_1" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "A Subsection\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "HEADING_2" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Level Three\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "HEADING_3" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Level Four\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "HEADING_4" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Level Five\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "HEADING_5" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Level Six\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "HEADING_6" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "A normal body paragraph of prose.\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "A second body paragraph.\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      }
+    ]
+  }
+}

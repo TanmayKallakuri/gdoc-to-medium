@@ -1,0 +1,23 @@
+{
+  "title": "Metadata Minimal",
+  "body": {
+    "content": [
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Just A Title\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "TITLE" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Body with no tags and no status line.\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      }
+    ]
+  }
+}

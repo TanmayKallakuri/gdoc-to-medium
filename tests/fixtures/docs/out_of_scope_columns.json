@@ -1,0 +1,27 @@
+{
+  "title": "Out of Scope Columns",
+  "body": {
+    "content": [
+      {
+        "sectionBreak": {
+          "sectionStyle": {
+            "columnSeparatorStyle": "BETWEEN_EACH_COLUMN",
+            "sectionType": "CONTINUOUS",
+            "columnProperties": [
+              { "width": { "magnitude": 234, "unit": "PT" } },
+              { "width": { "magnitude": 234, "unit": "PT" } }
+            ]
+          }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Text that lives inside a two-column section.\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      }
+    ]
+  }
+}

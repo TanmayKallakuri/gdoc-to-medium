@@ -1,0 +1,84 @@
+{
+  "title": "Lists",
+  "lists": {
+    "kix.bulletlist": {
+      "listProperties": {
+        "nestingLevels": [
+          { "glyphType": "GLYPH_TYPE_UNSPECIFIED", "glyphSymbol": "●" }
+        ]
+      }
+    },
+    "kix.numberlist": {
+      "listProperties": {
+        "nestingLevels": [
+          { "glyphType": "DECIMAL", "glyphFormat": "%0." }
+        ]
+      }
+    }
+  },
+  "body": {
+    "content": [
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Shopping list\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "HEADING_2" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Apples\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" },
+          "bullet": { "listId": "kix.bulletlist", "nestingLevel": 0 }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Pears\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" },
+          "bullet": { "listId": "kix.bulletlist", "nestingLevel": 0 }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Steps\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "HEADING_2" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "First do this\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" },
+          "bullet": { "listId": "kix.numberlist", "nestingLevel": 0 }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Then that\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" },
+          "bullet": { "listId": "kix.numberlist", "nestingLevel": 0 }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Lonely item\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" },
+          "bullet": { "listId": "kix.bulletlist", "nestingLevel": 0 }
+        }
+      }
+    ]
+  }
+}

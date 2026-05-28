@@ -1,0 +1,120 @@
+{
+  "title": "Combined",
+  "lists": {
+    "kix.bl": {
+      "listProperties": {
+        "nestingLevels": [
+          { "glyphType": "GLYPH_TYPE_UNSPECIFIED", "glyphSymbol": "●" }
+        ]
+      }
+    }
+  },
+  "inlineObjects": {
+    "kix.fig": {
+      "inlineObjectProperties": {
+        "embeddedObject": {
+          "description": "A combined figure",
+          "imageProperties": {
+            "contentUri": "https://lh3.googleusercontent.com/docs/fig"
+          }
+        }
+      }
+    }
+  },
+  "body": {
+    "content": [
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Everything Together\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "TITLE" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Tags: demo, combined\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Status: publish\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Introduction\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "HEADING_1" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "This post mixes ", "textStyle": {} } },
+            { "textRun": { "content": "bold", "textStyle": { "bold": true } } },
+            { "textRun": { "content": ", ", "textStyle": {} } },
+            { "textRun": { "content": "italic", "textStyle": { "italic": true } } },
+            { "textRun": { "content": ", a ", "textStyle": {} } },
+            { "textRun": { "content": "link", "textStyle": { "link": { "url": "https://example.com" } } } },
+            { "textRun": { "content": ", and inline ", "textStyle": {} } },
+            { "textRun": { "content": "code()", "textStyle": { "weightedFontFamily": { "fontFamily": "Roboto Mono", "weight": 400 } } } },
+            { "textRun": { "content": ".\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Point one\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" },
+          "bullet": { "listId": "kix.bl", "nestingLevel": 0 }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Point two\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" },
+          "bullet": { "listId": "kix.bl", "nestingLevel": 0 }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "import sys\n", "textStyle": { "weightedFontFamily": { "fontFamily": "Source Code Pro", "weight": 400 } } } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "sys.exit(0)\n", "textStyle": { "weightedFontFamily": { "fontFamily": "Source Code Pro", "weight": 400 } } } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "And a figure: ", "textStyle": {} } },
+            { "inlineObjectElement": { "inlineObjectId": "kix.fig" } },
+            { "textRun": { "content": "\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      }
+    ]
+  }
+}

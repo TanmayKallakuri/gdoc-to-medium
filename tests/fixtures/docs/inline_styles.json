@@ -1,0 +1,67 @@
+{
+  "title": "Inline Styles",
+  "body": {
+    "content": [
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Plain then ", "textStyle": {} } },
+            { "textRun": { "content": "bold", "textStyle": { "bold": true } } },
+            { "textRun": { "content": " and ", "textStyle": {} } },
+            { "textRun": { "content": "italic", "textStyle": { "italic": true } } },
+            { "textRun": { "content": " words.\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Both ", "textStyle": {} } },
+            { "textRun": { "content": "at once", "textStyle": { "bold": true, "italic": true } } },
+            { "textRun": { "content": " here.\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "See ", "textStyle": {} } },
+            { "textRun": { "content": "the docs", "textStyle": { "link": { "url": "https://example.com/docs" } } } },
+            { "textRun": { "content": " for more.\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "A ", "textStyle": {} } },
+            { "textRun": { "content": "bold link", "textStyle": { "bold": true, "link": { "url": "https://example.com/bold" } } } },
+            { "textRun": { "content": " text.\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "Whitespace ", "textStyle": { "bold": true } } },
+            { "textRun": { "content": "   ", "textStyle": { "bold": true } } },
+            { "textRun": { "content": "kept.\n", "textStyle": {} } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      },
+      {
+        "paragraph": {
+          "elements": [
+            { "textRun": { "content": "No style object at all on this run.\n" } }
+          ],
+          "paragraphStyle": { "namedStyleType": "NORMAL_TEXT" }
+        }
+      }
+    ]
+  }
+}
