@@ -11,17 +11,22 @@ import re
 
 REDACTED = "***REDACTED***"
 
+# A token value: opaque, >=8 chars, and not a plain dictionary word (must carry
+# a digit or one of . _ -). This keeps the bearer pattern off natural prose.
+_TOKEN_VALUE = r"(?=[A-Za-z0-9._\-]*[0-9._\-])[A-Za-z0-9._\-]{8,}"
+
 # Shapes that are secret-looking on their own, redacted even if no exact value
 # was registered. Order matters: more specific patterns first.
 _PATTERNS: tuple[re.Pattern[str], ...] = (
-    # Authorization: Bearer <token>  /  "Bearer abc123"
-    re.compile(r"(?i)(bearer\s+)[A-Za-z0-9._\-]+"),
-    # key=value / key: value where the key names a secret. The value is not
-    # allowed to be "Bearer ..." so the Bearer pattern above owns that case
-    # and we don't redact the scheme word itself.
+    # "Authorization: Bearer <token>" / "Bearer <token>" — only when the value
+    # is token-shaped, so prose like "bearer of gifts" is left untouched.
+    re.compile(rf"(?i)(bearer\s+){_TOKEN_VALUE}"),
+    # key=value / key: value where the key names a secret. The value stops before
+    # surrounding punctuation/quotes so context (e.g. password='x') survives; the
+    # value is not allowed to be "Bearer ..." so the bearer pattern above owns that.
     re.compile(
         r"(?i)((?:authorization|token|api[_-]?key|secret|password|passwd|integration[_-]?token)"
-        r"\s*[:=]\s*)(?!bearer\b)([^\s,;'\"]+)"
+        r"\s*[:=]\s*['\"]?)(?!bearer\b)([^\s,;'\"!?()<>]+)"
     ),
 )
 
@@ -79,5 +84,7 @@ def setup_logging(
     target = handler or logging.StreamHandler()
     target.addFilter(redactor)
     logger.addHandler(target)
+    # Logger-level filter intentionally duplicates the handler's so any handler a
+    # later wave adds is also covered; redaction is idempotent so running twice is safe.
     logger.addFilter(redactor)
     return redactor

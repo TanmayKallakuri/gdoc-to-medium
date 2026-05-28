@@ -58,6 +58,23 @@ def test_keyed_secret_pattern_redacted_without_registration():
     assert REDACTED in out
 
 
+def test_bearer_in_prose_not_redacted():
+    text = "She is the bearer of gifts"
+    assert redact(text) == text
+
+
+def test_keyed_secret_preserves_surrounding_quotes_and_punctuation():
+    out = redact("password='secretpass1'")
+    assert "secretpass1" not in out
+    assert out == f"password='{REDACTED}'"
+
+
+def test_keyed_secret_in_sentence_preserves_trailing_words():
+    out = redact("the token=abc123def was rejected")
+    assert "abc123def" not in out
+    assert out == f"the token={REDACTED} was rejected"
+
+
 def test_setup_logging_scrubs_through_handler(caplog):
     redactor = setup_logging(secrets=[FAKE_TOKEN])
     try:

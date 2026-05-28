@@ -86,11 +86,12 @@ def _project_root() -> Path:
 
 
 def _resolve_config_file() -> Path:
-    for directory in candidate_config_dirs():
+    dirs = candidate_config_dirs()
+    for directory in dirs:
         candidate = directory / CONFIG_FILENAME
         if candidate.is_file():
             return candidate
-    searched = ", ".join(str(d) for d in candidate_config_dirs())
+    searched = ", ".join(str(d) for d in dirs)
     raise ConfigNotFoundError(
         f"No {CONFIG_FILENAME} found. Looked in: {searched}. "
         f"Copy config.example.toml into one of these directories and fill it in."
