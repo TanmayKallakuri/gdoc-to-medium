@@ -18,6 +18,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
 
+[project.scripts]
+gdoc-to-medium = "gdoc_to_medium.cli:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
