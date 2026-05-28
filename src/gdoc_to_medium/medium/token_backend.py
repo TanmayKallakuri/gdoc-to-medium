@@ -143,3 +143,24 @@ class TokenBackend:
         self._author_id = author_id
         logger.info("resolved Medium author id")
         return author_id
+
+    def upload_image(self, data: bytes, content_type: str) -> str:
+        """Upload image bytes to /v1/images and return the hosted Medium URL (spec 5.3).
+
+        The content type is validated locally first: Medium accepts only
+        jpeg/png/gif/tiff, so an unsupported type is a permanent error caught
+        before we waste a network round trip. The multipart form field must be
+        named exactly 'image' (research note).
+        """
+        normalized = (content_type or "").strip().lower()
+        if normalized not in SUPPORTED_IMAGE_TYPES:
+            supported = ", ".join(sorted(SUPPORTED_IMAGE_TYPES))
+            raise PermanentMediumError(
+                f"uploading image: unsupported content type {normalized!r}; "
+                f"Medium accepts only {supported}"
+            )
+        files = {"image": ("image", data, normalized)}
+        response = self._request("POST", f"{API_BASE}/images", files=files)
+        if response.status_code != 201:
+            raise _classify_status(response.status_code, "uploading image (/v1/images)")
+        return self._data_field(response, "url", "uploading image (/v1/images)")
