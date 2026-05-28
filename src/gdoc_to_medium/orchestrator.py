@@ -74,6 +74,7 @@ def run(
     """
     docs = drive.list_ready()
     if not docs:
+        print("Nothing to do — the 'Ready to Publish' folder is empty.")
         return 0
 
     ok = 0
@@ -84,8 +85,18 @@ def run(
         except _TRANSIENT as exc:
             # Leave the doc in Ready; the next scheduled run retries it (spec 6).
             logger.warning("transient failure on doc %s; leaving in Ready: %s", doc.doc_id, exc)
+        except ImageDownloadError as exc:
+            # The downloader carries its own transient/permanent split: a network
+            # blip leaves the doc in Ready, a missing/forbidden image is permanent.
+            if exc.transient:
+                logger.warning(
+                    "transient image-download failure on doc %s; leaving in Ready: %s",
+                    doc.doc_id, exc,
+                )
+            else:
+                _route_permanent(doc, drive, config, exc, dry_run)
         except Exception as exc:
-            # Everything else is permanent: the _PERMANENT errors, PermanentDocError,
+            # Everything else is permanent: the Permanent* errors, PermanentDocError,
             # and any unexpected crash -> route to Failed rather than retry (spec 6).
             _route_permanent(doc, drive, config, exc, dry_run)
     return ok
