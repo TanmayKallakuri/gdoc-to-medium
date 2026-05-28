@@ -106,8 +106,7 @@ def _render_structural_element(
         return [block] if block is not None else []
     if "table" in element:
         return _render_table(element["table"], lists, inline_objects, image_refs)
-    # sectionBreak (incl. multi-column), tableOfContents, and anything unknown: drop it,
-    # the surrounding content still converts (spec 5.2 out-of-scope, graceful degradation).
+    # sectionBreak (incl. multi-column), tableOfContents, unknown: drop, neighbors still convert (spec 5.2).
     return []
 
 
@@ -141,9 +140,7 @@ def _render_paragraph(
         return _Block(text=f"{prefix} {text}", kind="heading", plain=plain_text.strip())
 
     if all_mono and not had_image and plain_text.strip():
-        # A paragraph entirely in a monospace font is a code line; coalescing merges
-        # consecutive ones into a single fenced block later. Use the raw plain text so
-        # indentation is verbatim and no inline backticks leak into the fence.
+        # Raw plain text keeps indentation verbatim and avoids leaking inline backticks into the fence.
         return _Block(text=plain_text.rstrip("\n"), kind="code", plain=plain_text.strip())
 
     text = inline_text.strip()
