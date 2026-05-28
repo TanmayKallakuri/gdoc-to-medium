@@ -1,0 +1,22 @@
+# Copy this file to your gitignored config directory as `config.toml`:
+#   %LOCALAPPDATA%\gdoc-to-medium\config.toml   (preferred)
+#   or  <project>\.secrets\config.toml          (fallback, gitignored)
+# Fill in real values there. Never commit the filled-in copy.
+
+# Path to the Google service-account JSON key file. Keep this file inside the
+# same gitignored config directory (or anywhere outside the repo) and lock down
+# its permissions to your user account only.
+service_account_file = "service-account.json"
+
+# Medium integration token (pre-2025 tokens only — see spec section 2).
+# Leave empty and set backend = "playwright" if you have no token.
+medium_token = "your-medium-integration-token-here"
+
+# Which Medium backend to use: "token" (REST API) or "playwright" (web UI fallback).
+backend = "token"
+
+# Drive folder ids for the folder-state workflow (filled in during setup, spec section 3).
+[folders]
+ready_to_publish = ""
+published = ""
+failed = ""
