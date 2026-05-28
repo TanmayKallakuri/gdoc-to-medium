@@ -8,7 +8,7 @@ from gdoc_to_medium import orchestrator
 from gdoc_to_medium.config import Config, SecretStr
 from gdoc_to_medium.drive_client import TransientDriveError
 from gdoc_to_medium.medium.token_backend import PermanentMediumError, TransientMediumError
-from gdoc_to_medium.types import DocRef, Metadata, PostResult
+from gdoc_to_medium.types import DocRef, ImageRef, Metadata, PostResult
 
 _DOC = {"body": {"content": []}}
 
@@ -128,6 +128,50 @@ def test_one_bad_doc_does_not_stop_the_others(monkeypatch):
     assert ("move", "d2", "FAIL") in drive.calls
     assert not any(c == ("move", "d1", "FAIL") for c in drive.calls)
     assert not any(c == ("move", "d3", "FAIL") for c in drive.calls)
+
+
+def test_transient_image_upload_leaves_doc_in_ready(monkeypatch):
+    # A transient failure during image upload (inside _resolve_images) must route
+    # like any other transient error: leave the doc in Ready, never post.
+    doc = DocRef(doc_id="d1", name="Pic")
+    drive = FakeDrive([doc])
+
+    class UploadFailMedium(FakeMedium):
+        def upload_image(self, data, content_type):
+            raise TransientMediumError("503 uploading image")
+
+    medium = UploadFailMedium()
+    monkeypatch.setattr(
+        orchestrator, "convert",
+        lambda d, f: ("![x](PLACEHOLDER:img1)", [ImageRef(object_id="img1")], Metadata(title="Pic")),
+    )
+
+    ok = orchestrator.run(drive, medium, _config(), image_downloader=lambda r, d: (b"x", "image/png"))
+
+    assert ok == 0
+    assert medium.posts == []
+    assert not any(c[0] == "move" for c in drive.calls)
+
+
+def test_missing_failed_folder_is_logged_not_raised(monkeypatch):
+    # If the Failed folder id is misconfigured, the cleanup can't move the doc;
+    # _route_permanent must log it and NOT re-raise, so the batch never crashes.
+    doc = DocRef(doc_id="d1", name="P")
+    drive = FakeDrive([doc])
+    medium = FakeMedium(post_exc=PermanentMediumError("400 bad request"))
+    monkeypatch.setattr(orchestrator, "convert", _plain())
+    config = Config(
+        config_dir=".",
+        service_account_file="sa.json",
+        medium_token=SecretStr("tok"),
+        backend="token",
+        folders={"published": "PUB", "ready": "READY"},  # no 'failed'
+    )
+
+    ok = orchestrator.run(drive, medium, config, image_downloader=lambda r, d: (b"", "image/png"))
+
+    assert ok == 0  # did not crash the run
+    assert not any(c[0] == "move" for c in drive.calls)  # dest lookup failed before move
 
 
 def test_transient_on_A_success_on_B_same_run(monkeypatch):

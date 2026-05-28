@@ -162,8 +162,11 @@ def _resolve_images(
     for ref in image_refs:
         data, content_type = image_downloader(ref, document)
         url = medium.upload_image(data, content_type)
-        placeholder = f"PLACEHOLDER:{ref.object_id}"
-        markdown = markdown.replace(placeholder, url)
+        # Anchor on the closing ')' of the markdown image token so an objectId that
+        # is a prefix of another can't corrupt the longer placeholder (which would
+        # then slip past the leftover guard below as a broken URL).
+        placeholder = f"PLACEHOLDER:{ref.object_id})"
+        markdown = markdown.replace(placeholder, url + ")")
 
     leftover = _PLACEHOLDER_RE.search(markdown)
     if leftover is not None:
