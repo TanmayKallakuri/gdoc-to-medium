@@ -74,6 +74,3 @@ share the parent folder, drop in your config, and confirm with a dry run.
 
 - [docs/SETUP.md](docs/SETUP.md) — get from a fresh clone to a working dry run.
 - [docs/SCHEDULING.md](docs/SCHEDULING.md) — register the scheduled task so it runs on its own.
-
-The full design, including the folder model and the known limitations above, is in
-[docs/superpowers/specs/2026-05-28-gdoc-to-medium-autopublisher-design.md](docs/superpowers/specs/2026-05-28-gdoc-to-medium-autopublisher-design.md).

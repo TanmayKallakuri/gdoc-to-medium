@@ -27,3 +27,7 @@ logs/
 # OS
 Thumbs.db
 .DS_Store
+
+# Internal planning/handoff docs — kept local, not published
+docs/superpowers/
+docs/RESUME.md
