@@ -8,11 +8,15 @@
 # its permissions to your user account only.
 service_account_file = "service-account.json"
 
-# Medium integration token (pre-2025 tokens only — see spec section 2).
-# Leave empty and set backend = "playwright" if you have no token.
+# Medium integration token (pre-2025 tokens only). Medium stopped issuing new ones
+# in 2025, so if you don't already have one, leave this blank and use the browser
+# path: set backend = "playwright" below and run `gdoc-to-medium login` once.
 medium_token = "your-medium-integration-token-here"
 
-# Which Medium backend to use: "token" (REST API) or "playwright" (web UI fallback).
+# Which Medium backend to use:
+#   "token"      — REST API, fast, but needs a pre-2025 integration token
+#   "playwright" — drives the Medium website in a saved browser session; no token
+#                  needed. Run `gdoc-to-medium login` once first. See docs/PLAYWRIGHT_SETUP.md
 backend = "token"
 
 # Drive folder ids for the folder-state workflow (filled in during setup, spec section 3).
@@ -22,3 +26,11 @@ backend = "token"
 ready = ""
 published = ""
 failed = ""
+
+# Playwright backend only (ignored when backend = "token").
+[playwright]
+# Where the logged-in Medium browser profile is stored. Treat it like a credential.
+# Defaults to a "medium-session" folder next to this config if left unset.
+# session_dir = ""
+# Run the browser invisibly. Set to false only when debugging to watch it work.
+headless = true

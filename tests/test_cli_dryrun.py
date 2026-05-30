@@ -69,7 +69,10 @@ def test_dry_run_prints_markdown_and_makes_no_calls(monkeypatch, capsys):
         raise AssertionError("dry-run must not download images")
 
     monkeypatch.setattr(cli, "load_config", lambda: _config())
-    monkeypatch.setattr(cli, "_build_context", lambda config, redactor: (drive, medium, no_download))
+    monkeypatch.setattr(
+        cli, "_build_context",
+        lambda config, redactor, stack, *, dry_run: (drive, medium, no_download),
+    )
 
     code = cli.main(["--dry-run"])
 
@@ -85,7 +88,8 @@ def test_dry_run_empty_ready_says_nothing_to_do(monkeypatch, capsys):
     medium = FakeMedium()
     monkeypatch.setattr(cli, "load_config", lambda: _config())
     monkeypatch.setattr(
-        cli, "_build_context", lambda config, redactor: (drive, medium, lambda r, d: (b"", "x"))
+        cli, "_build_context",
+        lambda config, redactor, stack, *, dry_run: (drive, medium, lambda r, d: (b"", "x")),
     )
 
     code = cli.main(["--dry-run"])
@@ -95,6 +99,8 @@ def test_dry_run_empty_ready_says_nothing_to_do(monkeypatch, capsys):
 
 
 def test_build_medium_wires_the_redactor_into_the_backend(monkeypatch):
+    import contextlib
+
     captured = {}
 
     class SpyBackend:
@@ -106,24 +112,30 @@ def test_build_medium_wires_the_redactor_into_the_backend(monkeypatch):
     redactor = RedactingFilter()
     config = _config()
 
-    cli._build_medium(config, redactor)
+    with contextlib.ExitStack() as stack:
+        cli._build_medium(config, redactor, stack, dry_run=False)
 
     # The exact token holder and the live redactor are passed through (spec 7).
     assert captured["redactor"] is redactor
     assert captured["token"] is config.medium_token
 
 
-def test_unknown_backend_is_a_clean_config_error():
+def test_playwright_backend_now_builds_instead_of_erroring():
+    import contextlib
+
+    from gdoc_to_medium.medium.playwright_backend import PlaywrightBackend
+
     config = Config(
         config_dir=".",
         service_account_file="sa.json",
-        medium_token=SecretStr("tok"),
+        medium_token=SecretStr(""),
         backend="playwright",
         folders={"ready": "READY"},
     )
-    with pytest.raises(ConfigError) as caught:
-        cli._build_medium(config, RedactingFilter())
-    assert "playwright" in str(caught.value).lower()
+    # Wave 6: the old "not built yet" ConfigError is gone; dry-run builds with no browser.
+    with contextlib.ExitStack() as stack:
+        backend = cli._build_medium(config, RedactingFilter(), stack, dry_run=True)
+    assert isinstance(backend, PlaywrightBackend)
 
 
 def test_config_error_exits_2_with_message(monkeypatch, capsys):

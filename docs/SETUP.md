@@ -7,9 +7,9 @@ You do this once; after that, publishing is just dragging a doc into a folder.
 
 - Python 3.13 on Windows.
 - A Google account whose Drive will hold your posts.
-- (For live posting) a Medium integration token issued **before 2025-01-01** —
-  Medium stopped issuing new ones. If you don't have one, you can still use
-  everything except the final post step; see [the token note](#4-medium-token).
+- A way to post to Medium — either sign in through the browser (no token needed) or a
+  Medium integration token from **before 2025-01-01** (Medium stopped issuing new ones).
+  Most people use the browser path; see [section 4](#4-how-the-tool-reaches-medium).
 
 ## 1. Install
 
@@ -60,13 +60,26 @@ security boundary — the service account can't see anything else in your Drive.
 segment of the URL, e.g. `https://drive.google.com/drive/folders/THIS_PART`.
 You need the ids for `Ready to Publish`, `Published`, and `Failed`.
 
-## 4. Medium token
+## 4. How the tool reaches Medium
 
-If you have a pre-2025 integration token, you'll paste it into the config in the
-next step. To check whether you can get one: Medium → Settings → **Security and
-apps → Integration tokens**. If that section exists, generate a token there. If
-it's gone, leave the token blank and set `backend = "playwright"` (the browser
-fallback — note that path isn't built yet; it's the next milestone if you need it).
+Pick one and set `backend` in the config (next step) to match.
+
+**Browser (recommended, no token):** set `backend = "playwright"`. After the config
+step you run a one-time sign-in. Full walkthrough: [PLAYWRIGHT_SETUP.md](PLAYWRIGHT_SETUP.md).
+In short:
+
+```powershell
+.\.venv\Scripts\python -m playwright install chromium   # one-time browser download
+.\.venv\Scripts\python -m gdoc_to_medium login          # sign in to Medium once
+```
+
+The login window stays open until you're signed in, then saves your session so future
+runs post on their own. You don't need a token.
+
+**Token (only if you already have one):** set `backend = "token"` and paste a pre-2025
+integration token in the next step. To check if you have one: Medium → Settings →
+**Security and apps → Integration tokens**. New tokens can't be created anymore, so if
+that section is empty, use the browser path above.
 
 ## 5. Config file
 
@@ -83,11 +96,15 @@ Then edit that `config.toml`:
 
 - `service_account_file` — path to the JSON key from step 2.4. Keep the key file in
   the same config directory and **never commit it**.
-- `medium_token` — your token (or leave blank for the Playwright fallback).
-- `backend` — `"token"` (default) or `"playwright"`.
+- `backend` — `"playwright"` for the browser path (no token) or `"token"` if you have one.
+- `medium_token` — your pre-2025 token for `backend = "token"`; leave blank for `playwright`.
 - `[folders]` — paste the three ids from step 3 into `ready`, `published`, `failed`.
 
 Lock the config directory down to your user account only.
+
+If you chose the browser path, run the one-time sign-in now (section 4):
+`.\.venv\Scripts\python -m playwright install chromium` then
+`.\.venv\Scripts\python -m gdoc_to_medium login`.
 
 ## 6. Verify with a dry run
 

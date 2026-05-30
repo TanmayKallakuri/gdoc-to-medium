@@ -33,11 +33,14 @@ reason noted at the top of the doc. There's no database to manage.
 
 - A Google account whose Drive holds your posts, and a service account that can read and
   move docs in one folder you share with it (setup walks you through this).
-- **A Medium integration token issued before January 2025.** This is the one real catch:
-  Medium stopped handing out new API tokens at the start of 2025, so if you don't already
-  have one, you currently can't get one through Medium's settings. A browser-automation
-  fallback that posts through the Medium web UI is planned for people without a token, but
-  it isn't built yet. If you have an older token, you're set.
+- **A way to reach Medium — pick one:**
+  - **The browser way (no token needed).** You sign in to Medium once in a window that
+    pops up, and from then on the tool posts through the Medium website using that saved
+    session. This is the path most people want, because Medium stopped handing out API
+    tokens in 2025. Setup: [docs/PLAYWRIGHT_SETUP.md](docs/PLAYWRIGHT_SETUP.md).
+  - **The token way (faster, if you already have one).** If you hold a Medium integration
+    token from before 2025, paste it in and posting goes straight through Medium's API.
+    New tokens can't be created anymore, so this is only for people who already have one.
 - Windows with Python 3.13.
 
 ## How it runs

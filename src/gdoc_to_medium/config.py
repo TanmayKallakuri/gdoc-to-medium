@@ -62,6 +62,10 @@ class Config:
     medium_token: SecretStr = field(repr=False)
     backend: str = "token"
     folders: dict[str, str] = field(default_factory=dict)
+    # Playwright backend only (spec 5.3 fallback). session_dir defaults next to the
+    # config dir; headless can be turned off to watch the browser while debugging.
+    playwright_session_dir: str | None = None
+    playwright_headless: bool = True
 
     def register_secrets(self, redactor: RedactingFilter) -> None:
         """Teach the redacting logger this run's token so it is scrubbed everywhere."""
@@ -144,10 +148,24 @@ def load_config(config_file: Path | None = None) -> Config:
     folders_raw = data.get("folders", {})
     folders = {k: str(v) for k, v in folders_raw.items()} if isinstance(folders_raw, dict) else {}
 
+    pw_raw = data.get("playwright", {})
+    pw = pw_raw if isinstance(pw_raw, dict) else {}
+    session_dir = pw.get("session_dir")
+    if session_dir is not None and not isinstance(session_dir, str):
+        raise ConfigError(
+            f"[playwright].session_dir in {path} must be a quoted path string, got {session_dir!r}."
+        )
+    session_dir = session_dir if isinstance(session_dir, str) and session_dir.strip() else None
+    headless = pw.get("headless", True)
+    if not isinstance(headless, bool):
+        raise ConfigError(f"[playwright].headless in {path} must be true or false, got {headless!r}.")
+
     return Config(
         config_dir=config_dir,
         service_account_file=sa_path,
         medium_token=SecretStr(token),
         backend=backend,
         folders=folders,
+        playwright_session_dir=session_dir,
+        playwright_headless=headless,
     )
